@@ -6,7 +6,7 @@ import (
 )
 
 type User struct {
-	Id        int64     `gorm:"column:id;primary_key;" json:"id"`
+	Id        int64     `gorm:"column:id;primary_key; autoIncrement" json:"id"`
 	Name      string    `gorm:"column:name;type:varchar(150);not null;" json:"name"`
 	TypeId    int64     `gorm:"column:type_id;not null"`
 	Type      Type      `gorm:"foreignKey:type_id;" json:"type"`

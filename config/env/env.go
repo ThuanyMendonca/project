@@ -3,6 +3,7 @@ package env
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -32,6 +33,7 @@ func Load() {
 	ProjectDb.Host = os.Getenv("DB_HOST")
 	ProjectDb.User = os.Getenv("DB_USER")
 	ProjectDb.Name = os.Getenv("DB_DB_NAME")
+	ProjectDb.Port, _ = strconv.ParseInt(os.Getenv("DB_PORT"), 10, 64)
 	ProjectDb.Password = os.Getenv("DB_PASSWORD")
 	ProjectDb.TimeZone = os.Getenv("DB_TIME_ZONE")
 	os.Getenv("DB_PORT")

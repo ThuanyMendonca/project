@@ -6,6 +6,7 @@ import (
 
 	"github.com/ThuanyMendonca/project/model"
 	userRepository "github.com/ThuanyMendonca/project/repository"
+	"github.com/ThuanyMendonca/project/utils"
 	"gorm.io/gorm"
 )
 
@@ -15,24 +16,33 @@ type IUserBusiness interface {
 }
 
 type UserBusiness struct {
-	UserRepository userRepository.IUserRepository
+	userRepository userRepository.IUserRepository
 }
 
-func NewUserBusiness(userRepository userRepository.UserRepository) IUserBusiness {
-	return &UserBusiness{&userRepository}
+func NewUserBusiness(userRepository userRepository.IUserRepository) IUserBusiness {
+	return &UserBusiness{userRepository}
 }
 
 func (u *UserBusiness) Post(user *model.User) (int, error) {
-	verifyUser, err := u.UserRepository.GetValidation(user.Document, user.Email)
+	verifyUser, err := u.userRepository.GetValidation(&model.User{
+		Email:    user.Email,
+		Document: user.Document,
+	})
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return http.StatusInternalServerError, err
 	}
 
-	if verifyUser != nil {
+	if verifyUser.Id != 0 {
 		return http.StatusBadRequest, errors.New("não é possível cadastrar usuário com os dados informados, verifique se já possuí cadastro")
 	}
 
-	if err := u.UserRepository.Create(user); err != nil {
+	newPassword, err := utils.GenerateHash(user.Password)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+	user.Password = string(newPassword)
+
+	if err := u.userRepository.Create(user); err != nil {
 		return http.StatusInternalServerError, err
 	}
 
@@ -40,7 +50,7 @@ func (u *UserBusiness) Post(user *model.User) (int, error) {
 }
 
 func (u *UserBusiness) Inactive(id int64) (int, error) {
-	if err := u.UserRepository.Inactive(id); err != nil {
+	if err := u.userRepository.Inactive(id); err != nil {
 		return http.StatusInternalServerError, err
 	}
 

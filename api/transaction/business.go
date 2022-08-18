@@ -3,22 +3,30 @@ package transaction
 import (
 	"errors"
 	"net/http"
+	"time"
 
+	"github.com/ThuanyMendonca/project/config/dbTransaction"
 	"github.com/ThuanyMendonca/project/model"
 	"github.com/ThuanyMendonca/project/repository"
+	"github.com/ThuanyMendonca/project/service/authorization"
 	"gorm.io/gorm"
 )
 
 type ITransaction interface {
+	Create(transaction *model.Transaction) (int, error)
 }
 
 type TransactionBusiness struct {
-	transactionRepo repository.TransactionRepository
-	userRepo        repository.UserRepository
+	dbTransactionFunc    dbTransaction.IDbTransaction
+	transactionRepo      repository.ITransactionRepository
+	userRepo             repository.IUserRepository
+	userType             repository.ITypeRepository
+	balanceRepo          repository.IBalanceRepository
+	authorizationService authorization.IAuthorizationService
 }
 
-func NewTransactionBusiness(transactionRepo repository.TransactionRepository, userRepo repository.UserRepository, userType repository.TypeRepository) ITransaction {
-	return &TransactionBusiness{transactionRepo, userRepo}
+func NewTransactionBusiness(dbTransactionFunc dbTransaction.IDbTransaction, transactionRepo repository.ITransactionRepository, userRepo repository.IUserRepository, userType repository.ITypeRepository, balanceRepo repository.IBalanceRepository, authorizationService authorization.IAuthorizationService) ITransaction {
+	return &TransactionBusiness{dbTransactionFunc, transactionRepo, userRepo, userType, balanceRepo, authorizationService}
 }
 
 func (t *TransactionBusiness) GetTransactionByUserId(userId int64) (int, *[]model.Transaction, error) {
@@ -38,26 +46,93 @@ func (t *TransactionBusiness) GetTransactionByUserId(userId int64) (int, *[]mode
 }
 
 func (t *TransactionBusiness) Create(transaction *model.Transaction) (int, error) {
-	isActiveUser, err := t.userRepo.IsActive(transaction.PayerId)
+	user, err := t.userRepo.GetById(transaction.PayerId)
 	if err != nil {
 		return http.StatusInternalServerError, err
 	}
 
-	if !isActiveUser {
+	if !user.IsActive {
 		return http.StatusBadRequest, errors.New("o usuário inativo, não é possível realizar transações")
 	}
 
-	userType, err := t.userRepo.GetType(transaction.PayerId)
+	// Verifica o tipo de usuário
+	userType, err := t.userRepo.GetType(user.TypeId)
 	if err != nil || errors.Is(err, gorm.ErrRecordNotFound) {
 		return http.StatusInternalServerError, err
 	}
 
 	shopper := "SHOPKEEPER"
-	if userType == &shopper {
+	if userType == shopper {
 		return http.StatusBadRequest, errors.New("lojista não pode realizar transações")
 	}
 
 	// verificar se tem saldo
+	balance, err := t.balanceRepo.Get(transaction.PayerId)
+	if err != nil || errors.Is(err, gorm.ErrRecordNotFound) {
+		return http.StatusNotFound, errors.New("o usuário não possui saldo")
+	}
 
-	return 0, nil
+	if balance.Amount <= 0 {
+		return http.StatusBadRequest, errors.New("saldo insuficiente")
+	}
+
+	tx, err := t.dbTransactionFunc.Begin()
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	newAmount, err := t.discountAmount(balance.Amount, transaction.Value)
+	if err != nil {
+		t.dbTransactionFunc.Rollback(tx)
+	}
+
+	addTransaction := model.Transaction{
+		Value:     transaction.Value,
+		PayerId:   transaction.PayerId,
+		CreatedAt: time.Now(),
+	}
+
+	statusCode, authorizated, err := t.authorizationService.Authorize()
+	if err != nil {
+		t.dbTransactionFunc.Rollback(tx)
+		return statusCode, err
+	}
+
+	if !authorizated.Authorization {
+		t.dbTransactionFunc.Rollback(tx)
+		return http.StatusInternalServerError, errors.New("transação não autorizada")
+	}
+
+	// Cria a transação
+	if err := t.createTransaction(tx, addTransaction); err != nil {
+		t.dbTransactionFunc.Rollback(tx)
+		return http.StatusInternalServerError, err
+	}
+
+	// atualizar o saldo na tabela balance
+	if err := t.balanceRepo.UpdateValue(tx, transaction.PayerId, *newAmount); err != nil {
+		t.dbTransactionFunc.Rollback(tx)
+		return http.StatusInternalServerError, err
+	}
+
+	t.dbTransactionFunc.Commit(tx)
+	return http.StatusCreated, nil
+}
+
+func (t *TransactionBusiness) discountAmount(balanceAmount, transactionAmount float64) (*float64, error) {
+	calculate := balanceAmount - transactionAmount
+
+	if calculate < 0 {
+		return nil, errors.New("saldo insuficiente para realizar a transação")
+	}
+
+	return &calculate, nil
+}
+
+func (t *TransactionBusiness) createTransaction(tx *gorm.DB, transaction model.Transaction) error {
+
+	if err := t.transactionRepo.Create(tx, &transaction); err != nil {
+		return err
+	}
+	return nil
 }

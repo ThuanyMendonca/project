@@ -6,7 +6,7 @@ import (
 )
 
 type ITransactionRepository interface {
-	Create(transaction *model.Transaction) error
+	Create(tx *gorm.DB, transaction *model.Transaction) error
 	GetByUser(userId int64) (*[]model.Transaction, error)
 }
 
@@ -18,7 +18,7 @@ func NewTransactionRepository(db *gorm.DB) ITransactionRepository {
 	return &TransactionRepository{db}
 }
 
-func (t *TransactionRepository) Create(transaction *model.Transaction) error {
+func (t *TransactionRepository) Create(tx *gorm.DB, transaction *model.Transaction) error {
 	return t.db.Create(transaction).Error
 }
 

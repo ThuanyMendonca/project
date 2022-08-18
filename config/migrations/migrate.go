@@ -11,6 +11,9 @@ func Load(db *gorm.DB) {
 
 func migrate(db *gorm.DB) {
 	db.AutoMigrate(
+		&model.Type{},
+		&model.Balance{},
 		&model.User{},
+		&model.Transaction{},
 	)
 }

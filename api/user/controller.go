@@ -35,10 +35,14 @@ func (u *UserController) Post(c *gin.Context) {
 
 	statusCode, err := u.userBusiness.Post(user)
 	if err != nil {
-		c.AbortWithStatusJSON(statusCode, err.Error())
+		c.JSON(statusCode, gin.H{"message": err.Error()})
 		return
 	}
 
+	if statusCode != http.StatusCreated {
+		c.AbortWithStatus(statusCode)
+		return
+	}
 	c.AbortWithStatus(statusCode)
 
 }

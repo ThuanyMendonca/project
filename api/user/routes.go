@@ -1,12 +1,12 @@
 package user
 
 import (
-	"github.com/ThuanyMendonca/project/repository"
+	"github.com/ThuanyMendonca/project/dependency"
 	"github.com/gin-gonic/gin"
 )
 
 func Router(r *gin.RouterGroup) {
-	b := NewUserBusiness(repository.UserRepository{})
+	b := NewUserBusiness(dependency.UserRepository)
 	c := NewUserController(b)
 
 	r.POST("/create", c.Post)
