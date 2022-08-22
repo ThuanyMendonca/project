@@ -14,6 +14,15 @@ type Balance struct {
 	UpdatedAt time.Time `gorm:"column:updated_at;type:datetime;" json:"updatedAt"`
 }
 
+type BalanceResp struct {
+	UserId int64   `json:"user_id"`
+	Amount float64 `json:"value"`
+}
+
+type BalanceAmount struct {
+	Amount float64 `json:"value"`
+}
+
 func (b *Balance) IsValid() error {
 	if b.Amount <= 0 {
 		return errors.New("valor é obrigatório")

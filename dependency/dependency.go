@@ -47,7 +47,7 @@ func Load() error {
 	DbTransaction = dbTransaction.NewDbTransaction(projectDb)
 
 	client := http.Client{
-		Timeout: time.Duration(5) * time.Second,
+		Timeout: time.Duration(2) * time.Second,
 	}
 
 	// Services

@@ -10,5 +10,6 @@ func Router(r *gin.RouterGroup) {
 	c := NewUserController(b)
 
 	r.POST("/create", c.Post)
+	r.PUT("/inactive/:id", c.Inactive)
 
 }

@@ -11,6 +11,7 @@ import (
 
 type IUserController interface {
 	Post(c *gin.Context)
+	Inactive(c *gin.Context)
 }
 
 type UserController struct {
@@ -29,7 +30,7 @@ func (u *UserController) Post(c *gin.Context) {
 	}
 
 	if err := user.IsValid(); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -59,7 +60,7 @@ func (u *UserController) Inactive(c *gin.Context) {
 
 	statusCode, err := u.userBusiness.Inactive(id64)
 	if err != nil {
-		c.AbortWithStatusJSON(statusCode, err.Error())
+		c.AbortWithStatusJSON(statusCode, gin.H{"message": err.Error()})
 		return
 	}
 

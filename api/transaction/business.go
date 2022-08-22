@@ -84,12 +84,7 @@ func (t *TransactionBusiness) Create(transaction *model.Transaction) (int, error
 	newAmount, err := t.discountAmount(balance.Amount, transaction.Value)
 	if err != nil {
 		t.dbTransactionFunc.Rollback(tx)
-	}
-
-	addTransaction := model.Transaction{
-		Value:     transaction.Value,
-		PayerId:   transaction.PayerId,
-		CreatedAt: time.Now(),
+		return http.StatusBadRequest, err
 	}
 
 	statusCode, authorizated, err := t.authorizationService.Authorize()
@@ -104,6 +99,12 @@ func (t *TransactionBusiness) Create(transaction *model.Transaction) (int, error
 	}
 
 	// Cria a transação
+	addTransaction := model.Transaction{
+		Value:     transaction.Value,
+		PayerId:   transaction.PayerId,
+		CreatedAt: time.Now(),
+	}
+
 	if err := t.createTransaction(tx, addTransaction); err != nil {
 		t.dbTransactionFunc.Rollback(tx)
 		return http.StatusInternalServerError, err

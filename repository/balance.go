@@ -11,6 +11,7 @@ type IBalanceRepository interface {
 	Add(balance *model.Balance) error
 	Get(userId int64) (*model.Balance, error)
 	UpdateValue(db *gorm.DB, userId int64, newValue float64) error
+	Update(userId int64, newValue float64) error
 }
 
 type BalanceReposity struct {
@@ -30,10 +31,11 @@ func (b *BalanceReposity) Get(userId int64) (*model.Balance, error) {
 	find := b.db
 
 	if userId != 0 {
-		find.Where("user_id = ?", userId)
+		find = find.Where("balances.user_id = ?", userId)
 	}
 
-	err := find.Find(balance).Error
+	find = find.Joins("User")
+	err := find.First(balance).Error
 	if err != nil {
 		return nil, err
 	}
@@ -44,6 +46,13 @@ func (b *BalanceReposity) Get(userId int64) (*model.Balance, error) {
 // update para atualizar o amount caso tenha quando fizer a transação
 func (b *BalanceReposity) UpdateValue(db *gorm.DB, userId int64, newValue float64) error {
 	return db.Model(&model.Balance{}).Where("user_id = ?", userId).UpdateColumns(map[string]interface{}{
+		"value":      newValue,
+		"updated_at": time.Now(),
+	}).Error
+}
+
+func (b *BalanceReposity) Update(userId int64, newValue float64) error {
+	return b.db.Model(&model.Balance{}).Where("user_id = ?", userId).UpdateColumns(map[string]interface{}{
 		"value":      newValue,
 		"updated_at": time.Now(),
 	}).Error

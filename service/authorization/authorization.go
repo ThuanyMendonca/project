@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/ThuanyMendonca/project/config/env"
 	"github.com/ThuanyMendonca/project/model"
 )
 
@@ -22,7 +23,7 @@ func NewAuthorizationService(client http.Client) IAuthorizationService {
 }
 
 func (a *AuthorizationService) Authorize() (int, *model.AuthorizeResponse, error) {
-	url := "https://run.mocky.io/v3/d02168c6-d88d-4ff2-aac6-9e9eb3425e31"
+	url := fmt.Sprintf("%s", env.AuthorizatorUrl)
 
 	req, err := http.NewRequest(http.MethodPost, url, nil)
 	if err != nil {
