@@ -12,8 +12,9 @@ import (
 	"gorm.io/gorm"
 )
 
-type ITransaction interface {
+type ITransactionBusiness interface {
 	Create(transaction *model.Transaction) (int, error)
+	GetTransactionByUserId(userId int64) (int, *[]model.Transaction, error)
 }
 
 type TransactionBusiness struct {
@@ -25,7 +26,7 @@ type TransactionBusiness struct {
 	authorizationService authorization.IAuthorizationService
 }
 
-func NewTransactionBusiness(dbTransactionFunc dbTransaction.IDbTransaction, transactionRepo repository.ITransactionRepository, userRepo repository.IUserRepository, userType repository.ITypeRepository, balanceRepo repository.IBalanceRepository, authorizationService authorization.IAuthorizationService) ITransaction {
+func NewTransactionBusiness(dbTransactionFunc dbTransaction.IDbTransaction, transactionRepo repository.ITransactionRepository, userRepo repository.IUserRepository, userType repository.ITypeRepository, balanceRepo repository.IBalanceRepository, authorizationService authorization.IAuthorizationService) ITransactionBusiness {
 	return &TransactionBusiness{dbTransactionFunc, transactionRepo, userRepo, userType, balanceRepo, authorizationService}
 }
 

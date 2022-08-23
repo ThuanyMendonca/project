@@ -13,10 +13,10 @@ type ITransactionController interface {
 }
 
 type TransactionController struct {
-	transactionBusiness ITransaction
+	transactionBusiness ITransactionBusiness
 }
 
-func NewUTransactionController(transactionBusiness ITransaction) ITransactionController {
+func NewUTransactionController(transactionBusiness ITransactionBusiness) ITransactionController {
 	return &TransactionController{transactionBusiness}
 }
 
