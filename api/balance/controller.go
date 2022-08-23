@@ -1,7 +1,6 @@
 package balance
 
 import (
-	"errors"
 	"net/http"
 	"strconv"
 
@@ -32,13 +31,13 @@ func (b *BalanceController) Post(c *gin.Context) {
 	}
 
 	if err := balance.IsValid(); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
 	statusCode, err := b.balanceBusiness.Create(balance.UserId, balance.Amount)
 	if err != nil {
-		c.JSON(statusCode, gin.H{"message": err.Error()})
+		c.AbortWithStatusJSON(statusCode, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -48,7 +47,7 @@ func (b *BalanceController) Post(c *gin.Context) {
 func (b *BalanceController) Update(c *gin.Context) {
 	userId := c.Param("userId")
 	if userId == "" {
-		c.AbortWithStatusJSON(http.StatusBadRequest, errors.New("id do usuário é obrigatório"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "id do usuário é obrigatório"})
 		return
 	}
 
@@ -57,7 +56,7 @@ func (b *BalanceController) Update(c *gin.Context) {
 	balance := &model.BalanceAmount{}
 
 	if err := c.ShouldBindJSON(balance); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, errors.New("conteúdo da requisição inválido"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "conteúdo da requisição inválido"})
 		return
 	}
 
@@ -73,7 +72,7 @@ func (b *BalanceController) Update(c *gin.Context) {
 func (b *BalanceController) Get(c *gin.Context) {
 	userId := c.Param("userId")
 	if userId == "" {
-		c.AbortWithStatusJSON(http.StatusBadRequest, errors.New("id do usuário é obrigatório"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "id do usuário é obrigatório"})
 		return
 	}
 
@@ -81,7 +80,7 @@ func (b *BalanceController) Get(c *gin.Context) {
 
 	statusCode, balance, err := b.balanceBusiness.Get(userId64)
 	if err != nil {
-		c.JSON(statusCode, gin.H{"message": err.Error()})
+		c.AbortWithStatusJSON(statusCode, gin.H{"message": err.Error()})
 		return
 	}
 

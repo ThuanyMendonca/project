@@ -14,6 +14,8 @@ type UserRepositorySpy struct {
 	IsActiveErr       error
 	GetTypeResp       string
 	GetTypeErr        error
+	GetResp           *model.User
+	GetErr            error
 }
 
 func (u *UserRepositorySpy) Create(user *model.User) error {
@@ -37,4 +39,8 @@ func (u *UserRepositorySpy) IsActive(id int64) (bool, error) {
 
 func (u *UserRepositorySpy) GetType(id int64) (string, error) {
 	return u.GetTypeResp, u.GetTypeErr
+}
+
+func (u *UserRepositorySpy) Get(username string) (*model.User, error) {
+	return u.GetResp, u.GetErr
 }

@@ -1,7 +1,6 @@
 package user
 
 import (
-	"errors"
 	"net/http"
 	"strconv"
 
@@ -25,7 +24,7 @@ func NewUserController(userBusiness IUserBusiness) IUserController {
 func (u *UserController) Post(c *gin.Context) {
 	user := &model.User{}
 	if err := c.ShouldBindJSON(user); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, errors.New("conteúdo da requisição inválido"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "conteúdo da requisição inválido"})
 		return
 	}
 
@@ -40,10 +39,6 @@ func (u *UserController) Post(c *gin.Context) {
 		return
 	}
 
-	if statusCode != http.StatusCreated {
-		c.AbortWithStatus(statusCode)
-		return
-	}
 	c.AbortWithStatus(statusCode)
 
 }
@@ -52,7 +47,7 @@ func (u *UserController) Inactive(c *gin.Context) {
 	id := c.Param("id")
 
 	if id == "" {
-		c.AbortWithStatusJSON(http.StatusBadRequest, errors.New("id é obrigatório"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "id do usuário é obrigatório"})
 		return
 	}
 

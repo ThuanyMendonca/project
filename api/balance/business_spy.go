@@ -11,8 +11,6 @@ type BalanceBusinessSpy struct {
 	GetError         error
 	UpdateStatusCode int
 	UpdateErr        error
-	CalculateResp    *float64
-	CalculateErr     error
 }
 
 func (b *BalanceBusinessSpy) Create(userId int64, value float64) (int, error) {
@@ -25,8 +23,4 @@ func (b *BalanceBusinessSpy) Get(userId int64) (int, *model.BalanceResp, error) 
 
 func (b *BalanceBusinessSpy) Update(userId int64, value float64) (int, error) {
 	return b.UpdateStatusCode, b.UpdateErr
-}
-
-func (b *BalanceBusinessSpy) calculateNewValue(oldBalance, newBalance float64) (*float64, error) {
-	return b.CalculateResp, b.CalculateErr
 }

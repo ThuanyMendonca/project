@@ -10,5 +10,6 @@ func Router(r *gin.RouterGroup) {
 
 	c := NewUTransactionController(b)
 
+	r.GET("/:userId", c.GetTransactionByUserId)
 	r.POST("", c.Post)
 }

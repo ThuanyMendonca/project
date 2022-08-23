@@ -12,6 +12,7 @@ type IUserRepository interface {
 	Inactive(id int64) error
 	IsActive(id int64) (bool, error)
 	GetType(id int64) (string, error)
+	Get(username string) (*model.User, error)
 }
 
 type UserRepository struct {
@@ -96,4 +97,20 @@ func (u *UserRepository) GetType(userTypeId int64) (string, error) {
 
 	return userType.Description, nil
 
+}
+
+func (u *UserRepository) Get(username string) (*model.User, error) {
+	user := &model.User{}
+	find := u.db
+
+	if username != "" {
+		find = find.Where("name = ?", username)
+	}
+
+	err := find.Find(user).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
