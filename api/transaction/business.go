@@ -69,8 +69,11 @@ func (t *TransactionBusiness) Create(transaction *model.Transaction) (int, error
 
 	// verificar se tem saldo
 	balance, err := t.balanceRepo.Get(transaction.PayerId)
-	if err != nil || errors.Is(err, gorm.ErrRecordNotFound) {
-		return http.StatusNotFound, errors.New("o usuário não possui saldo")
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return http.StatusNotFound, errors.New("o usuário não possui saldo")
+		}
+		return http.StatusInternalServerError, err
 	}
 
 	if balance.Amount <= 0 {
@@ -96,7 +99,7 @@ func (t *TransactionBusiness) Create(transaction *model.Transaction) (int, error
 
 	if !authorizated.Authorization {
 		t.dbTransactionFunc.Rollback(tx)
-		return http.StatusInternalServerError, errors.New("transação não autorizada")
+		return http.StatusOK, errors.New("transação não autorizada")
 	}
 
 	// Cria a transação

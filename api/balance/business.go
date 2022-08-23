@@ -29,6 +29,7 @@ func (b *BalanceBusiness) Create(userId int64, value float64) (int, error) {
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return http.StatusInternalServerError, err
 	}
+
 	if balance != nil {
 		return http.StatusBadRequest, errors.New("já existe um registro de saldo, considere atualizar o saldo")
 	}
@@ -82,13 +83,9 @@ func (b *BalanceBusiness) Get(userId int64) (int, *model.BalanceResp, error) {
 	balance, err := b.balanceRepo.Get(userId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return http.StatusNotFound, nil, nil
+			return http.StatusNotFound, nil, errors.New("registro não encontrado")
 		}
 		return http.StatusInternalServerError, nil, err
-	}
-
-	if balance.Id == 0 {
-		return http.StatusNotFound, nil, nil
 	}
 
 	balanceResp := &model.BalanceResp{

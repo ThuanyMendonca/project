@@ -22,6 +22,10 @@ var (
 	ProjectDb DataBase
 )
 
+var (
+	AuthorizatorUrl string
+)
+
 func Load() {
 	if err := godotenv.Load(); err != nil {
 		fmt.Println("Running application without env file")
@@ -36,6 +40,6 @@ func Load() {
 	ProjectDb.Port, _ = strconv.ParseInt(os.Getenv("DB_PORT"), 10, 64)
 	ProjectDb.Password = os.Getenv("DB_PASSWORD")
 	ProjectDb.TimeZone = os.Getenv("DB_TIME_ZONE")
-	os.Getenv("DB_PORT")
+	AuthorizatorUrl = os.Getenv("AUTHORIZATOR_URL")
 
 }

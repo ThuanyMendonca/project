@@ -32,7 +32,7 @@ func (u *UserBusiness) Post(user *model.User) (int, error) {
 		return http.StatusInternalServerError, err
 	}
 
-	if verifyUser.Id != 0 {
+	if verifyUser != nil && verifyUser.Id != 0 {
 		return http.StatusBadRequest, errors.New("não é possível cadastrar usuário com os dados informados, verifique se já possuí cadastro")
 	}
 

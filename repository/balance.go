@@ -36,6 +36,7 @@ func (b *BalanceReposity) Get(userId int64) (*model.Balance, error) {
 
 	find = find.Joins("User")
 	err := find.First(balance).Error
+
 	if err != nil {
 		return nil, err
 	}
