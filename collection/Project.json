@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"maria\",\n    \"typeId\": 2,\n    \"document\": \"11121128844\",\n    \"email\": \"abc@teste.com.br\",\n    \"password\": \"123456\",\n    \"isActive\": true\n}",
+							"raw": "{\n    \"name\": \"loja\",\n    \"typeId\": 1,\n    \"document\": \"22123323210\",\n    \"email\": \"aabb@teste.com.br\",\n    \"password\": \"123456\",\n    \"isActive\": true\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -42,14 +42,14 @@
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{dev}}/user/inactive/2",
+							"raw": "{{dev}}/user/inactive/3",
 							"host": [
 								"{{dev}}"
 							],
 							"path": [
 								"user",
 								"inactive",
-								"2"
+								"3"
 							]
 						}
 					},
@@ -63,11 +63,21 @@
 				{
 					"name": "Post",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdW0iOjUsImV4cCI6MTY2MTM2MjM2MSwiaWF0IjoxNjYxMzU1MTYxLCJpc3MiOiJib29rLWFwaSJ9.1oqHLGypNW7LSkDgPSfbqo6VmtfHVi1z8l2E21ZCCZ4",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"value\": 30,\n    \"payerId\": 3\n}",
+							"raw": "{\n    \"value\": 30,\n    \"payerId\": 6\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -94,11 +104,21 @@
 				{
 					"name": "Create",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdW0iOjUsImV4cCI6MTY2MTM2MjM2MSwiaWF0IjoxNjYxMzU1MTYxLCJpc3MiOiJib29rLWFwaSJ9.1oqHLGypNW7LSkDgPSfbqo6VmtfHVi1z8l2E21ZCCZ4",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"userId\": 2,\n    \"value\": 50\n}",
+							"raw": "{\n    \"userId\": 4,\n    \"value\": 50\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -125,7 +145,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdW0iOjUsImV4cCI6MTY2MTM2MjM2MSwiaWF0IjoxNjYxMzU1MTYxLCJpc3MiOiJib29rLWFwaSJ9.1oqHLGypNW7LSkDgPSfbqo6VmtfHVi1z8l2E21ZCCZ4",
 									"type": "string"
 								}
 							]
@@ -142,13 +162,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{dev}}/balance/2",
+							"raw": "{{dev}}/balance/4",
 							"host": [
 								"{{dev}}"
 							],
 							"path": [
 								"balance",
-								"2"
+								"4"
 							]
 						}
 					},
@@ -157,16 +177,26 @@
 				{
 					"name": "Get",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdW0iOjUsImV4cCI6MTY2MTM2MjM2MSwiaWF0IjoxNjYxMzU1MTYxLCJpc3MiOiJib29rLWFwaSJ9.1oqHLGypNW7LSkDgPSfbqo6VmtfHVi1z8l2E21ZCCZ4",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{dev}}/balance/2",
+							"raw": "{{dev}}/balance/4",
 							"host": [
 								"{{dev}}"
 							],
 							"path": [
 								"balance",
-								"2"
+								"4"
 							]
 						}
 					},
@@ -184,7 +214,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"userName\": \"thuany\",\n    \"password\": \"123456\"\n}",
+							"raw": "{\n    \"userName\": \"maria\",\n    \"password\": \"123456\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
