@@ -4,13 +4,35 @@
 
 API de transferência de saldos entre usuários.
 
-## Como executar o projeto:
+## Clonando o projeto
 
 Clone o projeto
 
 ```bash
   git clone https://github.com/ThuanyMendonca/project.git
 ```
+
+## Variáveis de Ambiente
+
+Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de ambiente no seu .env
+
+`DB_HOST`
+`DB_USER`
+`DB_NAME`
+`DB_PASSWORD`
+`DB_PORT`
+`DB_TIME_ZONE`
+`PORT`
+`GIN_MODE`
+`AUTHORIZATOR_URL`
+
+Obs: Já configurado para rodar na sua máquina. 😉
+
+## Executar script
+
+É necessário rodar o script que está na pasta scripts para inserir os tipos de usuários
+
+## Como executar o projeto:
 
 Entre no diretório
 
@@ -29,22 +51,6 @@ Rodar o projeto
 ```bash
   go run main.go
 ```
-
-## Variáveis de Ambiente
-
-Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de ambiente no seu .env
-
-`DB_HOST`
-`DB_USER`
-`DB_NAME`
-`DB_PASSWORD`
-`DB_PORT`
-`DB_TIME_ZONE`
-`PORT`
-`GIN_MODE`
-`AUTHORIZATOR_URL`
-
-Obs: Já configurado para rodar na sua máquina. 😉
 
 ## Rodando os testes
 
